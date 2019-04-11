@@ -8,5 +8,7 @@ import dev.denisnosoff.nasaapp.util.state.State
 class MainFragmentPresenter : MvpPresenter<MainFragmentView>() {
     fun init() {
         viewState.setUiState(State.LOADING)
+
+
     }
 }

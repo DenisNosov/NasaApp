@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">NasaApp</string>
+    <string name="photo_image_view_description">NASA Mars Rover image</string>
 </resources>

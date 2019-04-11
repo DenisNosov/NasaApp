@@ -8,7 +8,12 @@ import retrofit2.http.Query
 interface NasaApi {
 
     @GET("mars-photos/api/v1/rovers/curiosity/latest_photos")
-    fun getLatestPhotos(@Query("api_key") apiKey : String) : Single<PhotosResponse>
+    fun getCuriosityLatestPhotos(@Query("api_key") apiKey : String) : Single<PhotosResponse>
 
+    @GET("mars-photos/api/v1/rovers/opportunity/latest_photos")
+    fun getOpportunityLatestPhotos(@Query("api_key") apiKey : String) : Single<PhotosResponse>
+
+    @GET("mars-photos/api/v1/rovers/spirit/latest_photos")
+    fun getSpiritLatestPhotos(@Query("api_key") apiKey : String) : Single<PhotosResponse>
 
 }

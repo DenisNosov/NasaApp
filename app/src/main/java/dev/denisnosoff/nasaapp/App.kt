@@ -4,6 +4,7 @@ import android.app.Application
 import dev.denisnosoff.nasaapp.di.AppComponent
 import dev.denisnosoff.nasaapp.di.DaggerAppComponent
 import dev.denisnosoff.nasaapp.di.modules.AppModule
+import dev.denisnosoff.nasaapp.di.modules.MvpModule
 import dev.denisnosoff.nasaapp.di.modules.NasaApiModule
 import dev.denisnosoff.nasaapp.di.modules.RoomDatabaseModule
 
@@ -14,6 +15,7 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
         appComponent = DaggerAppComponent.builder()
+            .mvpModule(MvpModule())
             .appModule(AppModule(applicationContext))
             .nasaApiModule(NasaApiModule())
             .roomDatabaseModule(RoomDatabaseModule())

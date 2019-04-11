@@ -75,6 +75,7 @@ class MainFragment : MvpAppCompatFragment() , MainFragmentView , Statable {
     ): View {
         val view = inflater.inflate(R.layout.fragment_main, container, false)
 
+        shortClick = activity as OnShortItemClickListener
         mainFragmentPresenter.init()
 
         return view
