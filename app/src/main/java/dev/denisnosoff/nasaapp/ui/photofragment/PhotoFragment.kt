@@ -27,9 +27,9 @@ class PhotoFragment : MvpAppCompatFragment(), PhotoView {
     @InjectPresenter
     lateinit var photoPresenter: PhotoPresenter
 
-    lateinit var pvPhoto: com.github.chrisbanes.photoview.PhotoView
-    lateinit var tvDate: TextView
-    lateinit var tvDescription: TextView
+//    lateinit var pvPhoto: com.github.chrisbanes.photoview.PhotoView
+//    lateinit var tvDate: TextView
+//    lateinit var tvDescription: TextView
 
     companion object {
         const val TAG = "PhotoFragment"
@@ -52,9 +52,9 @@ class PhotoFragment : MvpAppCompatFragment(), PhotoView {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_photo, container, false)
 
-        pvPhoto = view.pvPhotoFullScreen
-        tvDate = view.tvDateFullScreen
-        tvDescription = view.tvDescriptionFullScreen
+//        pvPhoto = view.pvPhotoFullScreen
+//        tvDate = view.tvDateFullScreen
+//        tvDescription = view.tvDescriptionFullScreen
 
         photoPresenter.init(arguments?.get(PHOTO_KEY) as PhotoRoomEntity)
 
@@ -63,28 +63,26 @@ class PhotoFragment : MvpAppCompatFragment(), PhotoView {
 
     override fun onResume() {
         super.onResume()
-        (activity as AppCompatActivity).supportActionBar?.hide()
         (activity as AppCompatActivity).window.statusBarColor = Color.BLACK
     }
 
     override fun onStop() {
         super.onStop()
-        (activity as AppCompatActivity).supportActionBar?.show()
         (activity as AppCompatActivity).window.statusBarColor = ContextCompat.getColor(context!!, R.color.colorPrimaryDark)
     }
 
     override fun setDate(date: String) {
-        tvDescriptionFullScreen.text = date
+        tvDateFullScreen.text = date
     }
 
     override fun setDescription(description: String) {
-        tvDescription.text = description
+        tvDescriptionFullScreen.text = description
     }
 
     override fun setPhoto(photoUrl: String) {
         Glide.with(this)
             .load(photoUrl)
-            .into(pvPhoto)
+            .into(pvPhotoFullScreen)
     }
 
 }

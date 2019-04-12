@@ -3,10 +3,7 @@ package dev.denisnosoff.nasaapp
 import android.app.Application
 import dev.denisnosoff.nasaapp.di.AppComponent
 import dev.denisnosoff.nasaapp.di.DaggerAppComponent
-import dev.denisnosoff.nasaapp.di.modules.AppModule
-import dev.denisnosoff.nasaapp.di.modules.MvpModule
-import dev.denisnosoff.nasaapp.di.modules.NasaApiModule
-import dev.denisnosoff.nasaapp.di.modules.RoomDatabaseModule
+import dev.denisnosoff.nasaapp.di.modules.*
 
 class App :  Application(){
 
@@ -18,6 +15,7 @@ class App :  Application(){
 
     override fun onCreate() {
         appComponent = DaggerAppComponent.builder()
+            .sharedPrefsModule(SharedPrefsModule())
             .appModule(AppModule(this))
             .mvpModule(MvpModule())
             .nasaApiModule(NasaApiModule(BASE_URL))

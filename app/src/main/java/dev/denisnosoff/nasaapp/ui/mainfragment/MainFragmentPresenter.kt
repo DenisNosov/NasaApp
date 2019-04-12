@@ -8,10 +8,12 @@ import dev.denisnosoff.nasaapp.data.nasaapi.NasaApi
 import dev.denisnosoff.nasaapp.data.nasaapi.model.LatestPhoto
 import dev.denisnosoff.nasaapp.data.room.PhotosDataBase
 import dev.denisnosoff.nasaapp.data.room.model.PhotoRoomEntity
+import dev.denisnosoff.nasaapp.data.sharedprefs.SharedPrefs
 import dev.denisnosoff.nasaapp.util.state.State
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxkotlin.concatAll
 import io.reactivex.rxkotlin.merge
 import io.reactivex.rxkotlin.toObservable
 import io.reactivex.schedulers.Schedulers
@@ -24,16 +26,23 @@ class MainFragmentPresenter : MvpPresenter<MainFragmentView>() {
 
     private val compositeDisposable = CompositeDisposable()
 
+    private var deletedPhotosList = arrayListOf<Int>()
+
     @Inject
     lateinit var nasaApi: NasaApi
 
     @Inject
     lateinit var photosDataBase: PhotosDataBase
 
+    @Inject
+    lateinit var sharedPrefs: SharedPrefs
+
     fun init() {
         viewState.setLoading()
 
         App.appComponent.inject(this)
+
+        deletedPhotosList = sharedPrefs.photosList
 
         getPhotos()
     }
@@ -46,10 +55,8 @@ class MainFragmentPresenter : MvpPresenter<MainFragmentView>() {
         val spiritPhotos = nasaApi.getSpiritLatestPhotos(API_KEY)
             .flatMap { it.latest_photos.toObservable() }
 
-//        Log.d("TAG", "logging photos $curiosityPhotos")
-
         val gettingPhotos = listOf<Observable<LatestPhoto>>(curiosityPhotos, opportunityPhotos, spiritPhotos)
-            .merge()
+            .concatAll()
             .map { PhotoRoomEntity(
                 it.id,
                 it.camera.full_name,
@@ -57,6 +64,7 @@ class MainFragmentPresenter : MvpPresenter<MainFragmentView>() {
                 it.img_src,
                 it.rover.name
             ) }
+            .filter { !deletedPhotosList.contains(it.id) }
             .toList()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -74,7 +82,8 @@ class MainFragmentPresenter : MvpPresenter<MainFragmentView>() {
 
     private fun tryToShowDataFromStorage() {
         val gettingPhotosFromStorage = photosDataBase.photosDao().getAllPhotos()
-            .toList()
+            .map { it.reversed() }
+            .map { it.filter { !deletedPhotosList.contains(it.id) } }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({
@@ -87,22 +96,41 @@ class MainFragmentPresenter : MvpPresenter<MainFragmentView>() {
     }
 
     private fun showData(photosList: List<PhotoRoomEntity>) {
-        viewState.updateList(photosList)
+        viewState.updateListWithNewPhotos(photosList)
+        viewState.setSuccess()
     }
 
     private fun saveData(photosList: List<PhotoRoomEntity>) {
+
+        photosDataBase.photosDao().clearDatabase().subscribeOn(Schedulers.io()).subscribe()
+
         val savingPhotos = photosDataBase.photosDao().insertPhotos(*photosList.toTypedArray())
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe()
 
-        compositeDisposable.add(savingPhotos)
+        compositeDisposable.addAll(savingPhotos)
+    }
+
+    fun longClick(photoId: Int) {
+        deletedPhotosList.add(photoId)
+        val deletingPhoto = photosDataBase.photosDao().deleteById(photoId)
+            .subscribeOn(Schedulers.io())
+            .subscribe {
+                tryToShowDataFromStorage()
+            }
+
+        compositeDisposable.add(deletingPhoto)
     }
 
     override fun onDestroy() {
+
+        sharedPrefs.photosList = deletedPhotosList
+
         if (!compositeDisposable.isDisposed) {
             compositeDisposable.dispose()
         }
         super.onDestroy()
     }
+
 }

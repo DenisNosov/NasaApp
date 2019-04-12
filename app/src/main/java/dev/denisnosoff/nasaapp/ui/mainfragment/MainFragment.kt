@@ -4,10 +4,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.arellomobile.mvp.presenter.InjectPresenter
-import dev.denisnosoff.nasaapp.App
 import dev.denisnosoff.nasaapp.R
 import dev.denisnosoff.nasaapp.data.room.model.PhotoRoomEntity
 import dev.denisnosoff.nasaapp.mvp.MvpAppCompatFragment
@@ -16,6 +15,7 @@ import dev.denisnosoff.nasaapp.util.show
 import dev.denisnosoff.nasaapp.util.state.Statable
 import dev.denisnosoff.nasaapp.util.state.State
 import kotlinx.android.synthetic.main.fragment_main.*
+import kotlinx.android.synthetic.main.fragment_main.view.*
 
 
 class MainFragment : MvpAppCompatFragment() , MainFragmentView , Statable{
@@ -48,6 +48,12 @@ class MainFragment : MvpAppCompatFragment() , MainFragmentView , Statable{
 
     lateinit var shortClick: OnShortItemClickListener
 
+    private lateinit var rvAdapter: PhotoAdapter
+    private lateinit var recyclerView: RecyclerView
+
+    private var photos = listOf<PhotoRoomEntity>()
+    private var currentPosition: Int = 0
+
     @InjectPresenter
     lateinit var mainFragmentPresenter: MainFragmentPresenter
 
@@ -75,18 +81,42 @@ class MainFragment : MvpAppCompatFragment() , MainFragmentView , Statable{
         val view = inflater.inflate(R.layout.fragment_main, container, false)
 
         shortClick = activity as OnShortItemClickListener
+
+        setupRecyclerView(view)
+
         mainFragmentPresenter.init()
 
         return view
     }
 
-    override fun updateList(photosList: List<PhotoRoomEntity>) {
+    private fun setupRecyclerView(view: View) {
+        recyclerView = view.recyclerView
+        rvAdapter = PhotoAdapter(
+            listOf(),
+            object : OnLongItemClickListener {
+                override fun onLongClick(photoId: Int) {
+                    mainFragmentPresenter.longClick(photoId)
+                }
+            },
+            shortClick)
+        recyclerView.adapter = rvAdapter
+        recyclerView.layoutManager = GridLayoutManager(context, 2)
 
     }
 
-    override fun setError(text: String) {
+    override fun updateListWithNewPhotos(photosList: List<PhotoRoomEntity>) {
+        photos = photosList
+        if (photos.size >= 20) {
+            rvAdapter.updatePhotos(photos.subList(0, 20))
+        } else {
+            rvAdapter.updatePhotos(photos)
+        }
+        currentPosition = 0
+    }
+
+    override fun setError(errorText: String) {
         state = State.ERROR
-        tvMainError.text = text
+        tvMainError.text = errorText
     }
 
     override fun setSuccess() {

@@ -7,7 +7,7 @@ import dev.denisnosoff.nasaapp.util.state.State
 
 interface MainFragmentView : MvpView {
 
-    fun updateList(photosList: List<PhotoRoomEntity>)
+    fun updateListWithNewPhotos(photosList: List<PhotoRoomEntity>)
 
     fun setSuccess()
     fun setLoading()
