@@ -4,7 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import com.arellomobile.mvp.presenter.InjectPresenter
+import dev.denisnosoff.nasaapp.App
 import dev.denisnosoff.nasaapp.R
 import dev.denisnosoff.nasaapp.data.room.model.PhotoRoomEntity
 import dev.denisnosoff.nasaapp.mvp.MvpAppCompatFragment
@@ -15,11 +18,7 @@ import dev.denisnosoff.nasaapp.util.state.State
 import kotlinx.android.synthetic.main.fragment_main.*
 
 
-class MainFragment : MvpAppCompatFragment() , MainFragmentView , Statable {
-
-    override fun setUiState(_state: State) {
-        state = _state
-    }
+class MainFragment : MvpAppCompatFragment() , MainFragmentView , Statable{
 
     override var state: State = State.SUCCESSFUL
     set(value) {
@@ -30,19 +29,19 @@ class MainFragment : MvpAppCompatFragment() , MainFragmentView , Statable {
     override fun changeUi(state: State) {
         when (state) {
             State.LOADING -> {
-                mainProgressBar.show()
-                mainViewGroup.hide()
-                mainErrorTextView.hide()
+                pbMainLoading.show()
+                viewGroupMain.hide()
+                tvMainError.hide()
             }
             State.SUCCESSFUL -> {
-                mainProgressBar.hide()
-                mainViewGroup.show()
-                mainErrorTextView.hide()
+                pbMainLoading.hide()
+                viewGroupMain.show()
+                tvMainError.hide()
             }
             State.ERROR -> {
-                mainProgressBar.hide()
-                mainViewGroup.hide()
-                mainErrorTextView.show()
+                pbMainLoading.hide()
+                viewGroupMain.hide()
+                tvMainError.show()
             }
         }
     }
@@ -79,5 +78,22 @@ class MainFragment : MvpAppCompatFragment() , MainFragmentView , Statable {
         mainFragmentPresenter.init()
 
         return view
+    }
+
+    override fun updateList(photosList: List<PhotoRoomEntity>) {
+
+    }
+
+    override fun setError(text: String) {
+        state = State.ERROR
+        tvMainError.text = text
+    }
+
+    override fun setSuccess() {
+        state = State.SUCCESSFUL
+    }
+
+    override fun setLoading() {
+        state = State.LOADING
     }
 }

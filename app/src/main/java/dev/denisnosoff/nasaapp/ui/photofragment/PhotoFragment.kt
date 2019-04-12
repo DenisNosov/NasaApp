@@ -19,6 +19,7 @@ import com.bumptech.glide.request.target.Target
 import dev.denisnosoff.nasaapp.R
 import dev.denisnosoff.nasaapp.data.room.model.PhotoRoomEntity
 import dev.denisnosoff.nasaapp.mvp.MvpAppCompatFragment
+import kotlinx.android.synthetic.main.fragment_photo.*
 import kotlinx.android.synthetic.main.fragment_photo.view.*
 
 class PhotoFragment : MvpAppCompatFragment(), PhotoView {
@@ -73,7 +74,7 @@ class PhotoFragment : MvpAppCompatFragment(), PhotoView {
     }
 
     override fun setDate(date: String) {
-        tvDate.text = date
+        tvDescriptionFullScreen.text = date
     }
 
     override fun setDescription(description: String) {
