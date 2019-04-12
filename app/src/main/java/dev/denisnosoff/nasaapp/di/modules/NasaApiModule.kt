@@ -9,15 +9,13 @@ import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
 @Module
-class NasaApiModule {
-
-    private val BASE_URL = "https://api.nasa.gov/"
+class NasaApiModule(val baseUrl: String) {
 
     @Singleton
     @Provides
     fun provideNasaApi() : NasaApi {
         val retrofit = Retrofit.Builder()
-            .baseUrl(BASE_URL)
+            .baseUrl(baseUrl)
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .build()
