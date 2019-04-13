@@ -1,7 +1,6 @@
 package dev.denisnosoff.nasaapp.ui.photofragment
 
 import android.text.format.DateFormat
-import android.util.Log
 import com.arellomobile.mvp.InjectViewState
 import com.arellomobile.mvp.MvpPresenter
 import dev.denisnosoff.nasaapp.data.room.model.PhotoRoomEntity
@@ -17,7 +16,7 @@ class PhotoPresenter : MvpPresenter<PhotoView>() {
             val dateString = DateFormat.format("dd.MM.yyyy", date).toString()
 
             viewState.setDate(dateString)
-            viewState.setDescription("Made by ${it.roverName} rover on ${it.cameraName}")
+            viewState.setDescription("Made by ${it.roverName} rover on ${it.cameraName}", it.roverName == "Opportunity")
             viewState.setPhoto(it.imgSrc)
         }
     }

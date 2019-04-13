@@ -53,6 +53,7 @@ class MainFragment : MvpAppCompatFragment() , MainFragmentView , Statable{
 
     private var photos = listOf<PhotoRoomEntity>()
     private var currentPosition: Int = 0
+    private var currentPhotos = listOf<PhotoRoomEntity>()
 
     @InjectPresenter
     lateinit var mainFragmentPresenter: MainFragmentPresenter
@@ -66,7 +67,11 @@ class MainFragment : MvpAppCompatFragment() , MainFragmentView , Statable{
     }
 
     interface OnShortItemClickListener {
-        fun onShortClick(photo: PhotoRoomEntity)
+        fun onShortClick(photos: List<PhotoRoomEntity>, position: Int)
+    }
+
+    interface GetPhotoPosition {
+        fun invoke(position: Int)
     }
 
     interface OnLongItemClickListener {
@@ -98,7 +103,8 @@ class MainFragment : MvpAppCompatFragment() , MainFragmentView , Statable{
         btnPageBack.setOnClickListener {
             btnPageForward.show()
             currentPosition -= 20
-            rvAdapter.updatePhotos(photos.subList(currentPosition, currentPosition + 20))
+            currentPhotos = photos.subList(currentPosition, currentPosition + 20)
+            rvAdapter.updatePhotos(currentPhotos)
             if (currentPosition == 0) {
                 btnPageBack.hide()
             }
@@ -108,10 +114,12 @@ class MainFragment : MvpAppCompatFragment() , MainFragmentView , Statable{
             currentPosition += 20
             if (photos.size >= currentPosition + 20) {
                 btnPageForward.show()
-                rvAdapter.updatePhotos(photos.subList(currentPosition, currentPosition + 20))
+                currentPhotos = photos.subList(currentPosition, currentPosition + 20)
+                rvAdapter.updatePhotos(currentPhotos)
             } else {
                 btnPageForward.hide()
-                rvAdapter.updatePhotos(photos.subList(currentPosition, photos.size))
+                currentPhotos = photos.subList(currentPosition, photos.size)
+                rvAdapter.updatePhotos(currentPhotos)
             }
             btnPageBack.show()
         }
@@ -126,7 +134,12 @@ class MainFragment : MvpAppCompatFragment() , MainFragmentView , Statable{
                     mainFragmentPresenter.longClick(photoId)
                 }
             },
-            shortClick)
+            object : GetPhotoPosition {
+                override fun invoke(position: Int) {
+                    shortClick.onShortClick(currentPhotos, position)
+                }
+
+            })
         recyclerView.adapter = rvAdapter
         recyclerView.layoutManager = GridLayoutManager(context, 2)
 
@@ -137,9 +150,11 @@ class MainFragment : MvpAppCompatFragment() , MainFragmentView , Statable{
         currentPosition = 0
         if (photos.size >= 20) {
             btnPageForward.show()
-            rvAdapter.updatePhotos(photos.subList(currentPosition, currentPosition + 20))
+            currentPhotos = photos.subList(currentPosition, currentPosition + 20)
+            rvAdapter.updatePhotos(currentPhotos)
         } else {
             btnPageForward.hide()
+            currentPhotos = photos
             rvAdapter.updatePhotos(photos)
         }
 

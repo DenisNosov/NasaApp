@@ -7,14 +7,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import dev.denisnosoff.nasaapp.R
 import dev.denisnosoff.nasaapp.data.room.model.PhotoRoomEntity
-import dev.denisnosoff.nasaapp.ui.mainfragment.MainFragment.OnLongItemClickListener
-import dev.denisnosoff.nasaapp.ui.mainfragment.MainFragment.OnShortItemClickListener
+import dev.denisnosoff.nasaapp.ui.mainfragment.MainFragment.*
 import kotlinx.android.synthetic.main.item_image.view.*
 
 class PhotoAdapter(
     private var photos: List<PhotoRoomEntity>,
     private val onLongItemClickListener: OnLongItemClickListener,
-    private val onShortItemClickListener: OnShortItemClickListener
+    private val getPhotoPosition : GetPhotoPosition
 ) : RecyclerView.Adapter<PhotoAdapter.PhotoViewHolder>() {
 
 
@@ -29,7 +28,9 @@ class PhotoAdapter(
         holder.bind(
             photos[position],
             onLongItemClickListener,
-            onShortItemClickListener)
+            getPhotoPosition,
+            position
+            )
     }
 
     fun updatePhotos(_photos: List<PhotoRoomEntity>) {
@@ -42,12 +43,13 @@ class PhotoAdapter(
         fun bind(
             photo: PhotoRoomEntity,
             longClick: OnLongItemClickListener,
-            shortClick: OnShortItemClickListener
+            getPhotoPosition: GetPhotoPosition,
+            position: Int
         ) {
             Glide.with(view)
                 .load(photo.imgSrc)
                 .into(view.ivPhoto)
-            view.setOnClickListener { shortClick.onShortClick(photo) }
+            view.setOnClickListener { getPhotoPosition.invoke(position) }
             view.setOnLongClickListener {
                 longClick.onLongClick(photo.id)
                 return@setOnLongClickListener true

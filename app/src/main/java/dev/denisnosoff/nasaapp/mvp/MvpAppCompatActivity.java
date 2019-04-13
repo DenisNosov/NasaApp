@@ -4,6 +4,10 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import com.arellomobile.mvp.MvpDelegate;
 
+/**
+ * Class was copied from Moxy sources, AppCompatActivity support library import replaced with androidx
+ */
+
 @SuppressWarnings("unused")
 public class MvpAppCompatActivity extends AppCompatActivity {
     private MvpDelegate<? extends MvpAppCompatActivity> mMvpDelegate;

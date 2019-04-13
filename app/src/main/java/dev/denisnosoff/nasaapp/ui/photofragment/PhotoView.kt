@@ -6,7 +6,7 @@ interface PhotoView : MvpView {
 
     fun setDate(date: String)
 
-    fun setDescription(description: String)
+    fun setDescription(description: String, payRespect: Boolean)
 
     fun setPhoto(photoUrl: String)
 

@@ -2,7 +2,6 @@ package dev.denisnosoff.nasaapp.data.nasaapi
 
 import dev.denisnosoff.nasaapp.data.nasaapi.model.PhotosResponse
 import io.reactivex.Observable
-import io.reactivex.Single
 import retrofit2.http.GET
 import retrofit2.http.Query
 

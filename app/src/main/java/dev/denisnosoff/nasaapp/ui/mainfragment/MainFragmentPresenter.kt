@@ -1,6 +1,5 @@
 package dev.denisnosoff.nasaapp.ui.mainfragment
 
-import android.util.Log
 import com.arellomobile.mvp.InjectViewState
 import com.arellomobile.mvp.MvpPresenter
 import dev.denisnosoff.nasaapp.App
@@ -9,11 +8,9 @@ import dev.denisnosoff.nasaapp.data.nasaapi.model.LatestPhoto
 import dev.denisnosoff.nasaapp.data.room.PhotosDataBase
 import dev.denisnosoff.nasaapp.data.room.model.PhotoRoomEntity
 import dev.denisnosoff.nasaapp.data.sharedprefs.SharedPrefs
-import dev.denisnosoff.nasaapp.util.state.State
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.rxkotlin.concatAll
 import io.reactivex.rxkotlin.merge
 import io.reactivex.rxkotlin.toObservable
 import io.reactivex.schedulers.Schedulers
@@ -56,7 +53,7 @@ class MainFragmentPresenter : MvpPresenter<MainFragmentView>() {
             .flatMap { it.latest_photos.toObservable() }
 
         val gettingPhotos = listOf<Observable<LatestPhoto>>(curiosityPhotos, opportunityPhotos, spiritPhotos)
-            .concatAll()
+            .merge()
             .map { PhotoRoomEntity(
                 it.id,
                 it.camera.full_name,
@@ -102,14 +99,20 @@ class MainFragmentPresenter : MvpPresenter<MainFragmentView>() {
 
     private fun saveData(photosList: List<PhotoRoomEntity>) {
 
-        photosDataBase.photosDao().clearDatabase().subscribeOn(Schedulers.io()).subscribe()
+        photosDataBase.photosDao().clearDatabase()
+            .doOnComplete {
+                val savingPhotos = photosDataBase.photosDao().insertPhotos(*photosList.toTypedArray())
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe()
 
-        val savingPhotos = photosDataBase.photosDao().insertPhotos(*photosList.toTypedArray())
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe()
+                compositeDisposable.addAll(savingPhotos)
+            }
+            .subscribeOn(Schedulers.io()).subscribe()
 
-        compositeDisposable.addAll(savingPhotos)
+
+
+
     }
 
     fun longClick(photoId: Int) {
