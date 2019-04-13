@@ -21,6 +21,8 @@ import dev.denisnosoff.nasaapp.data.room.model.PhotoRoomEntity
 import dev.denisnosoff.nasaapp.mvp.MvpAppCompatFragment
 import kotlinx.android.synthetic.main.fragment_photo.*
 import kotlinx.android.synthetic.main.fragment_photo.view.*
+import org.jetbrains.anko.custom.style
+import org.jetbrains.anko.toast
 
 class PhotoFragment : MvpAppCompatFragment(), PhotoView {
 
@@ -75,8 +77,14 @@ class PhotoFragment : MvpAppCompatFragment(), PhotoView {
         tvDateFullScreen.text = date
     }
 
-    override fun setDescription(description: String) {
+    override fun setDescription(description: String, payRespect: Boolean) {
         tvDescriptionFullScreen.text = description
+        if (payRespect) {
+            tvDescriptionFullScreen.setTextColor(resources.getColor(R.color.colorLink))
+            tvDescriptionFullScreen.setOnClickListener {
+                context?.toast("My battery is low and it's getting dark")
+            }
+        }
     }
 
     override fun setPhoto(photoUrl: String) {

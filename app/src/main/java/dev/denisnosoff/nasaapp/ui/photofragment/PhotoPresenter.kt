@@ -17,7 +17,7 @@ class PhotoPresenter : MvpPresenter<PhotoView>() {
             val dateString = DateFormat.format("dd.MM.yyyy", date).toString()
 
             viewState.setDate(dateString)
-            viewState.setDescription("Made by ${it.roverName} rover on ${it.cameraName}")
+            viewState.setDescription("Made by ${it.roverName} rover on ${it.cameraName}", it.roverName == "Opportunity")
             viewState.setPhoto(it.imgSrc)
         }
     }
