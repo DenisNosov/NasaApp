@@ -82,14 +82,42 @@ class MainFragment : MvpAppCompatFragment() , MainFragmentView , Statable{
 
         shortClick = activity as OnShortItemClickListener
 
-        setupRecyclerView(view)
+        initRecyclerView(view)
 
         mainFragmentPresenter.init()
 
         return view
     }
 
-    private fun setupRecyclerView(view: View) {
+    override fun onStart() {
+        super.onStart()
+        initButtons()
+    }
+
+    private fun initButtons() {
+        btnPageBack.setOnClickListener {
+            btnPageForward.show()
+            currentPosition -= 20
+            rvAdapter.updatePhotos(photos.subList(currentPosition, currentPosition + 20))
+            if (currentPosition == 0) {
+                btnPageBack.hide()
+            }
+        }
+
+        btnPageForward.setOnClickListener {
+            currentPosition += 20
+            if (photos.size >= currentPosition + 20) {
+                btnPageForward.show()
+                rvAdapter.updatePhotos(photos.subList(currentPosition, currentPosition + 20))
+            } else {
+                btnPageForward.hide()
+                rvAdapter.updatePhotos(photos.subList(currentPosition, photos.size))
+            }
+            btnPageBack.show()
+        }
+    }
+
+    private fun initRecyclerView(view: View) {
         recyclerView = view.recyclerView
         rvAdapter = PhotoAdapter(
             listOf(),
@@ -106,12 +134,16 @@ class MainFragment : MvpAppCompatFragment() , MainFragmentView , Statable{
 
     override fun updateListWithNewPhotos(photosList: List<PhotoRoomEntity>) {
         photos = photosList
+        currentPosition = 0
         if (photos.size >= 20) {
-            rvAdapter.updatePhotos(photos.subList(0, 20))
+            btnPageForward.show()
+            rvAdapter.updatePhotos(photos.subList(currentPosition, currentPosition + 20))
         } else {
+            btnPageForward.hide()
             rvAdapter.updatePhotos(photos)
         }
-        currentPosition = 0
+
+        btnPageBack.hide()
     }
 
     override fun setError(errorText: String) {
