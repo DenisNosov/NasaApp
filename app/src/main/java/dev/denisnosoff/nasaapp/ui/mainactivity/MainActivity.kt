@@ -5,15 +5,14 @@ import androidx.appcompat.app.AppCompatActivity
 import dev.denisnosoff.nasaapp.App
 import dev.denisnosoff.nasaapp.R
 import dev.denisnosoff.nasaapp.data.room.model.PhotoRoomEntity
-import dev.denisnosoff.nasaapp.mvp.MvpAppCompatActivity
 import dev.denisnosoff.nasaapp.ui.mainfragment.MainFragment
 import dev.denisnosoff.nasaapp.util.Router
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity(), MainFragment.OnShortItemClickListener {
 
-    override fun onShortClick(photo: PhotoRoomEntity) {
-        mainPresenter.onShortItemClick(photo)
+    override fun onShortClick(photos: List<PhotoRoomEntity>, position: Int) {
+        mainPresenter.onShortItemClick(photos, position)
     }
 
     @Inject

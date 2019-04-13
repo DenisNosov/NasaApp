@@ -1,7 +1,6 @@
 package dev.denisnosoff.nasaapp.ui.photofragment
 
 import android.text.format.DateFormat
-import android.util.Log
 import com.arellomobile.mvp.InjectViewState
 import com.arellomobile.mvp.MvpPresenter
 import dev.denisnosoff.nasaapp.data.room.model.PhotoRoomEntity

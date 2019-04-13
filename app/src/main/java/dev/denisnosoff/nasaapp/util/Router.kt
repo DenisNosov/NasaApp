@@ -4,7 +4,7 @@ import androidx.fragment.app.FragmentManager
 import dev.denisnosoff.nasaapp.R
 import dev.denisnosoff.nasaapp.data.room.model.PhotoRoomEntity
 import dev.denisnosoff.nasaapp.ui.mainfragment.MainFragment
-import dev.denisnosoff.nasaapp.ui.photofragment.PhotoFragment
+import dev.denisnosoff.nasaapp.ui.photofragmentcontainer.PhotoContainerFragment
 
 class Router(private val fragmentManager: FragmentManager) {
 
@@ -17,9 +17,9 @@ class Router(private val fragmentManager: FragmentManager) {
         transaction.commitNow()
     }
 
-    fun navigateToPhotoFragment(photo: PhotoRoomEntity) {
+    fun navigateToPhotoFragment(photos: List<PhotoRoomEntity>, position: Int) {
         val transaction = fragmentManager.beginTransaction()
-        transaction.add(id, PhotoFragment.newInstance(photo), PhotoFragment.TAG)
+        transaction.add(id, PhotoContainerFragment.newInstance(ArrayList(photos), position), PhotoContainerFragment.TAG)
         transaction.addToBackStack(TRANSACTION_NAME)
         transaction.commit()
     }

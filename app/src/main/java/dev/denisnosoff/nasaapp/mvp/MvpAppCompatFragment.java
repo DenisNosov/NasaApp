@@ -5,12 +5,7 @@ import androidx.fragment.app.Fragment;
 import com.arellomobile.mvp.MvpDelegate;
 
 /**
- * Date: 19-Dec-15
- * Time: 13:25
- *
- * @author Alexander Blinov
- * @author Yuri Shmakov
- * @author Konstantin Tckhovrebov
+ * Class was copied from Moxy sources, Fragment support library import replaced with and
  */
 @SuppressWarnings({"ConstantConditions", "unused"})
 public class MvpAppCompatFragment extends Fragment {
