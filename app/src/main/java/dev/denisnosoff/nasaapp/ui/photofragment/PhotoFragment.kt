@@ -59,14 +59,8 @@ class PhotoFragment : MvpAppCompatFragment(), PhotoView {
         tvDateFullScreen.text = date
     }
 
-    override fun setDescription(description: String, payRespect: Boolean) {
+    override fun setDescription(description: String) {
         tvDescriptionFullScreen.text = description
-        if (payRespect) {
-            tvDescriptionFullScreen.setTextColor(resources.getColor(R.color.colorLink))
-            tvDescriptionFullScreen.setOnClickListener {
-                context?.toast("My battery is low, and it's getting dark")
-            }
-        }
     }
 
     override fun setPhoto(photoUrl: String) {
