@@ -45,15 +45,9 @@ class MainFragmentPresenter : MvpPresenter<MainFragmentView>() {
     }
 
     private fun getPhotos() {
-        val curiosityPhotos = nasaApi.getCuriosityLatestPhotos(API_KEY)
-            .flatMap { it.latest_photos.toObservable() }
-        val opportunityPhotos = nasaApi.getOpportunityLatestPhotos(API_KEY)
-            .flatMap { it.latest_photos.toObservable() }
-        val spiritPhotos = nasaApi.getSpiritLatestPhotos(API_KEY)
-            .flatMap { it.latest_photos.toObservable() }
 
-        val gettingPhotos = listOf<Observable<LatestPhoto>>(curiosityPhotos, opportunityPhotos, spiritPhotos)
-            .merge()
+        val gettingPhotos = nasaApi.getCuriosityLatestPhotos(API_KEY)
+            .flatMap { it.latest_photos.toObservable() }
             .map { PhotoRoomEntity(
                 it.id,
                 it.camera.full_name,
